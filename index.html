@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html land="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do List</title>
+    <style>
+      .todo-list {
+        list-style: none;
+        padding-left: 0;
+      }
+      .todo-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        border-bottom: 1px solid #ccc;
+      }
+      .todo-item.done {
+        text-decoration: line-through;
+        opacity: 0.5;
+      }
+      .todo-input {
+        margin-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>To-Do List</h1>
+    <ul class="todo-list"></ul>
+    <form class="todo-input">
+      <input type="text" name="todo" placeholder="Enter a new todo" />
+      <button type="submit">Add</button>
+    </form>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // пустий лист
+        var todos = [];
+
+        // функція для рендеру/заповнення ліста
+        function renderTodoList() {
+          var todoList = $(".todo-list");
+          todoList.empty();
+          for (var i = 0; i < todos.length; i++) {
+            var todo = todos[i];
+            var todoItem = $(
+              '<li class="todo-item">' + (i + 1) + ". " + todo.text + "</li>"
+            );
+            if (todo.done) {
+              todoItem.addClass("done");
+            }
+            todoItem.click(
+              (function (todoCopy) {
+                return function () {
+                  todoCopy.done = !todoCopy.done;
+                  renderTodoList();
+                };
+              })(todo)
+            );
+            todoList.append(todoItem);
+          }
+        }
+
+        // вішаємо слухача подій інпут
+        $(".todo-input").submit(function (event) {
+          event.preventDefault();
+          var todoInput = $(this).find('input[name="todo"]');
+          var todoText = todoInput.val();
+          if (todoText) {
+            todos.push({ text: todoText, done: false });
+            todoInput.val("");
+            renderTodoList();
+          }
+        });
+
+        // викликаємо функцію рендеру
+        renderTodoList();
+      });
+    </script>
+  </body>
+</html>
